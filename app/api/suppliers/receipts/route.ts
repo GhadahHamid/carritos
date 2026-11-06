@@ -3,10 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    // Await the params object as required by Next.js 15+
+    const { id } = await context.params;
     
     const receipts = await prisma.purchaseOrder.findMany({
       where: { supplierId: id },

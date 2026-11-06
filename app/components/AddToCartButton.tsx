@@ -9,14 +9,17 @@ export function AddToCartButton({ product }: { product: { id: string, name: stri
   const [added, setAdded] = useState(false);
 
   const handleAdd = () => {
+    // Add the 'quantity: 1' property here to match the CartItem type
+    const cartItem = { ...product, quantity: 1 };
+    
     // Add the product 'quantity' times
     for (let i = 0; i < quantity; i++) {
-      addToCart(product);
+      addToCart(cartItem);
     }
     
     // Show the "Added" success state briefly
     setAdded(true);
-    setQuantity(1); // Reset quantity back to 1
+    setQuantity(1); 
     setTimeout(() => setAdded(false), 1500); 
   };
 
