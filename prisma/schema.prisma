@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String
+  slug     String    @unique
+  products Product[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float    // Selling price
+  costPrice   Float?   // Price you bought it for (per item)
+  barcode     String?  @unique
+  imageUrl    String?
+  stock       Int      @default(0)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Supplier {
+  id            String          @id @default(uuid())
+  name          String
+  phone         String?
+  createdAt     DateTime        @default(now())
+  purchaseOrders PurchaseOrder[]
+}
+
+model PurchaseOrder {
+  id          String   @id @default(uuid())
+  supplierId  String
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  totalCost   Float    // Total amount paid to supplier
+  exchangeRate Float   // LBP to USD rate at time of purchase
+  createdAt   DateTime @default(now())
+  items       PurchaseItem[]
+}
+
+model PurchaseItem {
+  id          String        @id @default(uuid())
+  purchaseOrderId String
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  productId   String        // We link it to the product it created/updated
+  quantity    Int           // Number of individual items
+  unitCost    Float         // Cost per single item
+}
+
+model Order {
+  id           String      @id @default(uuid())
+  customerName String
+  phoneNumber  String
+  address      String
+  region       String
+  total        Float
+  status       String      @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  createdAt    DateTime    @default(now())
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  quantity  Int
+  price     Float
+}
+
+model AdminUser {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+}
