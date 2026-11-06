@@ -30,7 +30,7 @@ export default function SuppliersPage() {
   const handleSelectSupplier = async (supplier: Supplier) => {
     setSelectedSupplier(supplier);
     setLoading(true);
-    const res = await fetch(`/api/suppliers/${supplier.id}/receipts`);
+    const res = await fetch(`/api/suppliers/receipts?supplierId=${supplier.id}`);
     const data = await res.json();
     setReceipts(data);
     setLoading(false);

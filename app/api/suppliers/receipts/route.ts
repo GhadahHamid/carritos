@@ -1,16 +1,17 @@
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: Request) {
   try {
-    // Await the params object as required by Next.js 15+
-    const { id } = await context.params;
+    const { searchParams } = new URL(req.url);
+    const supplierId = searchParams.get("supplierId");
+
+    if (!supplierId) {
+      return NextResponse.json({ error: "Supplier ID is required" }, { status: 400 });
+    }
     
     const receipts = await prisma.purchaseOrder.findMany({
-      where: { supplierId: id },
+      where: { supplierId: supplierId },
       orderBy: { createdAt: 'desc' },
     });
 
