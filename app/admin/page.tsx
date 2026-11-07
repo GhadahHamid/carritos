@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { addProduct, deleteProduct, updateProduct, updateOrderStatus } from "@/app/adminActions";
 import { Suspense } from "react";
+import Image from "next/image";
 
 async function DashboardStats() {
   const orders = await prisma.order.findMany();
@@ -53,9 +54,15 @@ async function ProductTable() {
           {products.map((product) => (
             <tr key={product.id} className="hover:bg-gray-50 transition">
               <td className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-300 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-gray-300 rounded-lg overflow-hidden flex items-center justify-center shrink-0 relative">
                   {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover mix-blend-multiply" />
+                    <Image 
+                      src={product.imageUrl} 
+                      alt={product.name} 
+                      fill 
+                      sizes="40px"
+                      className="object-cover mix-blend-multiply" 
+                    />
                   ) : (
                     <span className="text-lg">🛍️</span>
                   )}

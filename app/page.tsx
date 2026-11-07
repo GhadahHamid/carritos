@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import Link from "next/link";
 import { Suspense } from "react";
+import Image from "next/image";
 
 async function CategoryList() {
   // We just fetch the categories from the DB to get the real links (/category/snacks)
@@ -71,7 +72,13 @@ async function FeaturedProducts() {
         <div key={product.id} className="bg-white rounded-[1.2rem] shadow-[0_4px_20px_-8px_rgba(0,0,0,0.08)] border border-gray-100 flex flex-col hover:shadow-lg transition-all duration-300 overflow-hidden">
           
           <div className="h-32 bg-[#F8F9FA] w-full flex items-center justify-center relative p-2">
-            <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
+            <Image 
+              src={product.imageUrl || "https://images.unsplash.com/photo-1542838132-92c53300491e"} 
+              alt={product.name} 
+              fill
+              sizes="(max-width: 768px) 50vw, 20vw"
+              className="object-contain mix-blend-multiply p-2" 
+            />
           </div>
           
           <div className="p-4 flex flex-col flex-grow">

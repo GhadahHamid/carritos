@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AddToCartButton } from "@/app/components/AddToCartButton";
+import Image from "next/image";
 
 async function ProductsList({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -34,12 +35,18 @@ async function ProductsList({ params }: { params: Promise<{ slug: string }> }) {
               
             {/* Product Image */}
             <div className="h-40 bg-[#F8F9FA] w-full flex items-center justify-center relative p-4">
-              {product.imageUrl ? (
-                <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
-              ) : (
-                 <span className="text-4xl">🛍️</span>
-              )}
-            </div>
+                {product.imageUrl ? (
+                  <Image 
+                    src={product.imageUrl} 
+                    alt={product.name} 
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-contain mix-blend-multiply p-2" 
+                  />
+                ) : (
+                   <span className="text-4xl">🛍️</span>
+                )}
+              </div>
 
             {/* Product Details */}
             <div className="p-4 flex flex-col flex-grow">
