@@ -45,9 +45,6 @@ async function ProductsList({ params }: { params: Promise<{ slug: string }> }) {
             {/* Product Details */}
             <div className="p-3 md:p-4 flex flex-col flex-grow">
               <h3 className="text-[13px] md:text-[16px] font-bold text-[#1E3A8A] leading-tight mb-1 line-clamp-2">{product.name}</h3>
-              <p className="text-[10px] md:text-[12px] text-gray-500 line-clamp-2 mb-2 md:mb-3 flex-grow">
-                {product.description || "Fresh and high quality."}
-              </p>
               
               <div className="flex items-center justify-between mb-2 md:mb-3">
                 <span className="text-[16px] md:text-[18px] font-extrabold text-[#1E3A8A]">
