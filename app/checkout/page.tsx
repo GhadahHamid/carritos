@@ -1,4 +1,5 @@
 "use client";
+import { useSession } from "next-auth/react";
 
 import { useCart } from "@/lib/CartContext";
 import { useRouter } from "next/navigation";
@@ -6,11 +7,23 @@ import { useState } from "react";
 import { createOrder } from "@/app/actions";
 import Link from "next/link";
 
+
+
 export default function CheckoutPage() {
   const { cart, total, clearCart } = useCart();
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
-  
+  const { data: session, status } = useSession();
+
+if (status === "loading") return <p>Loading...</p>;
+if (status === "unauthenticated") {
+  return (
+    <div className="text-center py-20">
+      <h2 className="text-2xl font-bold mb-4">Please sign in to checkout</h2>
+      <Link href="/login" className="bg-[#F97316] text-white px-6 py-3 rounded-full font-bold">Sign In</Link>
+    </div>
+  );
+}
   // Form State
   const [formData, setFormData] = useState({
     name: "",

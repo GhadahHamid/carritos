@@ -4,18 +4,27 @@ import { useState } from "react";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // <--- THIS LINE IS MISSING
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name");
+    const phone = formData.get("phone");
+    const message = formData.get("message");
+
+    const fullMessage = `Name: ${name}%0APhone: ${phone}%0AMessage: ${message}`;
     
-    // Simulate sending an email/request
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-    }, 1000);
+    // Open WhatsApp with your number (change 961XXXXXXXX to your real number)
+    window.open(`https://wa.me/96112345678?text=${fullMessage}`, "_blank");
+    
+    // Open Gmail
+    window.open(`mailto:carritos@gmail.com?subject=Contact from ${name}&body=${fullMessage}`, "_blank");
+    
+    setSubmitted(true);
   };
+  
 
   return (
     <main className="min-h-screen bg-[#F8F9FA] pb-16 pt-12">

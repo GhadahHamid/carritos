@@ -57,7 +57,19 @@ async function CategoryList() {
   );
 }
 async function FeaturedProducts() {
-  // Beautiful food images for the demo
+  // Fetch from DB: Only featured, not hidden, and limit to 5
+  const dbProducts = await prisma.product.findMany({
+    where: { 
+      isFeatured: true, 
+      isHidden: false ,
+      needsMaintenance: false // <--- ADD THIS LINE
+
+    },
+    take: 5,
+    orderBy: { createdAt: 'desc' },
+  });
+
+  // Fallback demo products if no featured products are set
   const demoProducts = [
     { id: "1", name: "Fresh Bananas", price: 0.99, description: "Fresh and ripe", imageUrl: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=300&h=300&fit=crop" },
     { id: "2", name: "Full Cream Milk", price: 1.49, description: "1L Fresh Milk", imageUrl: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=300&h=300&fit=crop" },
@@ -66,30 +78,24 @@ async function FeaturedProducts() {
     { id: "5", name: "Fresh Apples", price: 1.99, description: "Red apples", imageUrl: "https://images.unsplash.com/photo-1560806887-1e4cd0b6faa6?w=300&h=300&fit=crop" },
   ];
 
+  const productsToRender = dbProducts.length > 0 ? dbProducts : demoProducts;
+
   return (
     <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-      {demoProducts.map((product) => (
+      {productsToRender.map((product) => (
         <div key={product.id} className="bg-white rounded-[1.2rem] shadow-[0_4px_20px_-8px_rgba(0,0,0,0.08)] border border-gray-100 flex flex-col hover:shadow-lg transition-all duration-300 overflow-hidden">
           
           <div className="h-32 bg-[#F8F9FA] w-full flex items-center justify-center relative p-2">
-            <Image 
-              src={product.imageUrl || "https://images.unsplash.com/photo-1542838132-92c53300491e"} 
-              alt={product.name} 
-              fill
-              sizes="(max-width: 768px) 50vw, 20vw"
-              className="object-contain mix-blend-multiply p-2" 
-            />
+            <img src={product.imageUrl || ""} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
           </div>
           
           <div className="p-4 flex flex-col flex-grow">
             <h3 className="font-bold text-[#1E3A8A] text-[14px] mb-1 line-clamp-1">{product.name}</h3>
-            <p className="text-[11px] text-gray-500 mb-3">{product.description}</p>
             
             <div className="mt-auto flex flex-col gap-2">
               <span className="font-extrabold text-[#1E3A8A] text-[16px]">${product.price.toFixed(2)}</span>
               <button className="w-full bg-[#F97316] text-white py-2 rounded-lg text-[12px] font-bold hover:bg-orange-600 transition flex items-center justify-center gap-1.5">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                Add
+                Add to Cart
               </button>
             </div>
           </div>
@@ -217,6 +223,60 @@ export default function Home() {
 
         </div>
       </div>
+
+
+            {/* LOCATION MAP SECTION */}
+            <div className="max-w-[1400px] mx-auto px-8 mt-12 mb-4">
+        <div className="bg-white rounded-[1.5rem] shadow-[0_4px_20px_-8px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden flex flex-col md:flex-row h-auto md:h-[350px]">
+          
+          {/* Left Side: Text & Info */}
+          <div className="p-8 md:p-12 md:w-1/3 flex flex-col justify-center bg-[#FFF4EC]">
+            <h2 className="text-[28px] font-extrabold text-[#1E3A8A] leading-tight mb-4">
+              Visit our <br/><span className="text-[#F97316]">Mini Market</span>
+            </h2>
+            <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+              Come say hi! We are located in the heart of the city. Fresh products, great prices, and a warm welcome await you.
+            </p>
+            
+            <div className="space-y-4 mb-8">
+              <div className="flex items-center gap-3 text-[#1E3A8A] font-bold text-sm">
+                <svg className="w-5 h-5 text-[#F97316]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                Beirut, Lebanon
+              </div>
+              <div className="flex items-center gap-3 text-[#1E3A8A] font-bold text-sm">
+                <svg className="w-5 h-5 text-[#F97316]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Open Daily: 8:00 AM - 11:00 PM
+              </div>
+            </div>
+
+            <a 
+              href="https://maps.google.com/?q=Beirut,Lebanon" // <--- REPLACE THIS WITH YOUR ACTUAL GOOGLE MAPS LINK
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-[#1E3A8A] text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-blue-900 transition text-center inline-block w-full"
+            >
+              Get Directions
+            </a>
+          </div>
+
+          {/* Right Side: The Map */}
+          <div className="md:w-2/3 h-[300px] md:h-full w-full bg-gray-200 relative">
+            {/* THIS IS THE MAP IFRAME. Replace the src with your shop's exact embed link */}
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13250.6668!2d35.501775!3d33.8886!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151f17215880a78f%3A0x729182bae99836b4!2sBeirut%2C%20Lebanon!5e0!3m2!1sen!2slb!4v1700000000000!5m2!1sen!2slb" 
+              width="100%" 
+              height="100%" 
+              style={{ border: 0, position: 'absolute', inset: 0 }} 
+              allowFullScreen 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+
+        </div>
+      </div>
+
+      
 
       {/* BOTTOM FEATURES BAR */}
       <div className="max-w-[1400px] mx-auto px-8 mt-8">

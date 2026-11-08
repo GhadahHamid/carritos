@@ -10,7 +10,14 @@ async function ProductsList({ params }: { params: Promise<{ slug: string }> }) {
 
   const category = await prisma.category.findUnique({
     where: { slug },
-    include: { products: true },
+    include: { 
+      products: {
+        where: { 
+          isHidden: false,
+          needsMaintenance: false // <--- ADD THIS LINE
+        } 
+      } 
+    },
   });
 
   if (!category) notFound();
@@ -44,15 +51,28 @@ async function ProductsList({ params }: { params: Promise<{ slug: string }> }) {
 
             {/* Product Details */}
             <div className="p-3 md:p-4 flex flex-col flex-grow">
-              <h3 className="text-[13px] md:text-[16px] font-bold text-[#1E3A8A] leading-tight mb-1 line-clamp-2">{product.name}</h3>
+              {/* Force the title to take exactly the same height everywhere */}
+              <h3 className="text-[13px] md:text-[15px] font-bold text-[#1E3A8A] leading-tight mb-2 line-clamp-2 min-h-[36px] md:min-h-[44px]">
+                {product.name}
+              </h3>
               
-              <div className="flex items-center justify-between mb-2 md:mb-3">
+              {/* Price - Now aligned perfectly */}
+              <div className="flex items-center justify-between mt-auto">
                 <span className="text-[16px] md:text-[18px] font-extrabold text-[#1E3A8A]">
                   ${product.price.toFixed(2)}
                 </span>
               </div>
 
-              <AddToCartButton product={{ id: product.id, name: product.name, price: product.price }} />
+              {/* Button added with some margin */}
+              <div className="mt-3">
+              {product.isOutOfStock ? (
+  <div className="w-full bg-gray-200 text-gray-500 py-2 rounded-lg text-[13px] font-bold text-center cursor-not-allowed">
+    Out of Stock
+  </div>
+) : (
+  <AddToCartButton product={{ id: product.id, name: product.name, price: product.price }} />
+)}
+              </div>
             </div>
           </div>
           ))}

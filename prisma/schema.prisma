@@ -19,14 +19,20 @@ model Product {
   id          String   @id @default(uuid())
   name        String
   description String?
-  price       Float    // Selling price
-  costPrice   Float?   // Price you bought it for (per item)
+  price       Float
+  costPrice   Float?   
   barcode     String?  @unique
   imageUrl    String?
   stock       Int      @default(0)
   categoryId  String
+  needsMaintenance Boolean @default(false)
   category    Category @relation(fields: [categoryId], references: [id])
   createdAt   DateTime @default(now())
+  
+  // NEW FIELDS
+  isFeatured  Boolean  @default(false)
+  isHidden    Boolean  @default(false)
+  isOutOfStock Boolean @default(false)
 }
 
 model Supplier {
@@ -41,8 +47,8 @@ model PurchaseOrder {
   id          String   @id @default(uuid())
   supplierId  String
   supplier    Supplier @relation(fields: [supplierId], references: [id])
-  totalCost   Float    // Total amount paid to supplier
-  exchangeRate Float   // LBP to USD rate at time of purchase
+  totalCost   Float    
+  exchangeRate Float   
   createdAt   DateTime @default(now())
   items       PurchaseItem[]
 }
@@ -51,9 +57,9 @@ model PurchaseItem {
   id          String        @id @default(uuid())
   purchaseOrderId String
   purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
-  productId   String        // We link it to the product it created/updated
-  quantity    Int           // Number of individual items
-  unitCost    Float         // Cost per single item
+  productId   String        
+  quantity    Int           
+  unitCost    Float         
 }
 
 model Order {
@@ -63,9 +69,13 @@ model Order {
   address      String
   region       String
   total        Float
-  status       String      @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  status       String      @default("PENDING") 
   createdAt    DateTime    @default(now())
   items        OrderItem[]
+  
+  // ADDED THIS BACK
+  userId       String?
+  user         User?       @relation(fields: [userId], references: [id])
 }
 
 model OrderItem {
@@ -81,4 +91,24 @@ model AdminUser {
   id       String @id @default(uuid())
   email    String @unique
   password String
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  password      String?
+  createdAt     DateTime  @default(now())
+  orders        Order[]
+  
+  // ADDED THIS BACK
+  sessions      Session[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

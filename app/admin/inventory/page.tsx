@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function InventoryPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -38,6 +39,16 @@ export default function InventoryPage() {
     fetchProducts();
   };
 
+  // Toggle Checkboxes (Featured, Hidden, Out of Stock)
+  const handleToggle = async (id: string, field: string, value: boolean) => {
+    await fetch(`/api/inventory/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [field]: value }),
+    });
+    fetchProducts();
+  };
+
   // Apply Global Percentage
   const applyGlobalMarkup = async () => {
     if (!confirm(`Increase all selling prices by ${percent}%?`)) return;
@@ -50,7 +61,7 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-[1400px] mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-extrabold text-[#1E3A8A]">Inventory Management</h1>
@@ -69,8 +80,8 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-left border-collapse">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[1000px]">
           <thead>
             <tr className="bg-gray-50 text-gray-600 text-xs border-b border-gray-200">
               <th className="p-4 font-bold">Product</th>
@@ -78,7 +89,11 @@ export default function InventoryPage() {
               <th className="p-4 font-bold">Cost ($)</th>
               <th className="p-4 font-bold">Price ($)</th>
               <th className="p-4 font-bold">Stock</th>
-              <th className="p-4 font-bold text-right">Action</th>
+              <th className="p-4 font-bold text-center">Featured</th>
+              <th className="p-4 font-bold text-center">Hide</th>
+              <th className="p-4 font-bold text-center">Out of Stock</th>
+              <th className="p-4 font-bold text-center">Maint.</th>
+              <th className="p-4 font-bold text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -106,8 +121,50 @@ export default function InventoryPage() {
                     className="w-16 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none" 
                   />
                 </td>
+                
+                {/* Checkboxes for Featured, Hidden, Out of Stock */}
+                <td className="p-4 text-center">
+                  <input 
+                    type="checkbox" 
+                    checked={product.isFeatured} 
+                    onChange={() => handleToggle(product.id, "isFeatured", !product.isFeatured)}
+                    className="w-5 h-5 text-[#F97316] rounded border-gray-300 focus:ring-[#F97316] cursor-pointer"
+                  />
+                </td>
+                <td className="p-4 text-center">
+                  <input 
+                    type="checkbox" 
+                    checked={product.isHidden} 
+                    onChange={() => handleToggle(product.id, "isHidden", !product.isHidden)}
+                    className="w-5 h-5 text-red-500 rounded border-gray-300 focus:ring-red-500 cursor-pointer"
+                  />
+                </td>
+                <td className="p-4 text-center">
+                  <input 
+                    type="checkbox" 
+                    checked={product.isOutOfStock} 
+                    onChange={() => handleToggle(product.id, "isOutOfStock", !product.isOutOfStock)}
+                    className="w-5 h-5 text-gray-500 rounded border-gray-300 focus:ring-gray-500 cursor-pointer"
+                  />
+                </td>
+                <td className="p-4 text-center">
+                    <input 
+                        type="checkbox" 
+                        checked={product.needsMaintenance} 
+                        onChange={() => handleToggle(product.id, "needsMaintenance", !product.needsMaintenance)}
+                        className="w-5 h-5 text-yellow-500 rounded border-gray-300 focus:ring-yellow-500 cursor-pointer"
+                    />
+                    </td>
+
                 <td className="p-4 text-right">
-                  <button onClick={() => handleDelete(product.id)} className="text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded text-xs font-bold transition">Delete</button>
+                  <div className="flex justify-end gap-2">
+                    <Link href={`/admin/inventory/edit/${product.id}`} className="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded text-xs font-bold transition">
+                      Edit
+                    </Link>
+                    <button onClick={() => handleDelete(product.id)} className="bg-red-50 text-red-500 hover:bg-red-100 px-3 py-1.5 rounded text-xs font-bold transition">
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

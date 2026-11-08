@@ -17,18 +17,23 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <Link href="/admin" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
             Dashboard
           </Link>
-          <Link href="/admin/purchases" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
-            Supplier Receipts (Add Stock)
+          
+          <Link href="/admin/inventory" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
+            Inventory
           </Link>
+
+          <Link href="/admin/maintenance" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
+            Maintenance
+          </Link>
+
+          <Link href="/admin/purchases" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
+            Supplier Receipts
+          </Link>
+
           <Link href="/admin/suppliers" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
             Suppliers & Receipts
           </Link>
-          <Link href="/admin/purchases" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
-            Add New Receipt
-          </Link>
-          <Link href="/admin/inventory" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
-            Manage Inventory
-          </Link>
+
           <Link href="/admin/categories" className="block px-4 py-3 rounded-lg hover:bg-blue-800 font-medium text-sm text-blue-100 transition">
             Manage Categories
           </Link>
